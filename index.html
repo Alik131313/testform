@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 ТЕСТ - Тройная отправка</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 6px 15px;
+            border-radius: 15px;
+            margin: 5px;
+            font-size: 14px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .test-info {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+
+        .test-info h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .test-info p {
+            color: #856404;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-overlay.visible {
+            display: flex;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-indicator {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 8px;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .success-message.visible {
+            display: block;
+        }
+
+        .success-message h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .results-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .result-item {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 3px solid #667eea;
+            background: white;
+            border-radius: 5px;
+        }
+
+        .result-item strong {
+            color: #2c3e50;
+        }
+
+        .config-box {
+            background: #e3f2fd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .config-box div {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 ТЕСТОВАЯ ФОРМА</h1>
+            <p>Проверка тройной отправки</p>
+            <div style="margin-top: 15px;">
+                <div class="badge">✉️ Formspree</div>
+                <div class="badge">📱 Telegram</div>
+                <div class="badge">💾 JSON</div>
+            </div>
+        </div>
+
+        <div class="content" id="formContent">
+            <div class="test-info">
+                <h3>📋 Информация о тесте</h3>
+                <p><strong>Цель:</strong> Проверить все 3 канала отправки данных</p>
+                <p><strong>Что проверяем:</strong></p>
+                <p>✅ Email на galiamov.al@tricompany.ru через Formspree</p>
+                <p>✅ Telegram-уведомление (Chat ID: 170363358)</p>
+                <p>✅ JSON скачивается локально</p>
+            </div>
+
+            <div class="config-box">
+                <div><strong>⚙️ Конфигурация:</strong></div>
+                <div>Formspree ID: <code>xdkpebpw</code></div>
+                <div>Telegram Bot: <code>8484797767:AAGg...I2a8</code></div>
+                <div>Chat ID: <code>170363358</code></div>
+            </div>
+
+            <form id="testForm">
+                <div class="form-group">
+                    <label for="name">👤 Ваше имя:</label>
+                    <input type="text" id="name" name="name" placeholder="Алик Галямов" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">📧 Email:</label>
+                    <input type="email" id="email" name="email" placeholder="galiamov.al@gmail.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">💬 Тестовое сообщение:</label>
+                    <textarea id="message" name="message" placeholder="Это тестовая отправка для проверки работы тройной системы доставки..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="testData">🔧 Дополнительные данные (необязательно):</label>
+                    <input type="text" id="testData" name="testData" placeholder="Любые тестовые данные...">
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn-primary" id="submitBtn">
+                        🚀 ОТПРАВИТЬ ТЕСТ (Email + Telegram + JSON)
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            <h2>✅ Тест завершён!</h2>
+            <p>Результаты отправки:</p>
+            <div class="results-box" id="resultsBox"></div>
+            <button class="btn-primary" onclick="location.reload()" style="margin-top: 20px; width: auto; padding: 12px 30px;">
+                🔄 Запустить новый тест
+            </button>
+        </div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h3>Отправка тестовых данных...</h3>
+            <p id="loadingText" style="margin: 15px 0; color: #666;">Инициализация</p>
+            <div style="margin-top: 20px;">
+                <div class="status-indicator status-pending" id="emailStatus">✉️ Email: Ожидание</div>
+                <div class="status-indicator status-pending" id="telegramStatus">📱 Telegram: Ожидание</div>
+                <div class="status-indicator status-success" id="jsonStatus">💾 JSON: Готов</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === CONFIGURATION ===
+        const CONFIG = {
+            formspreeId: 'xdkpebpw',
+            telegramBotToken: '8484797767:AAGgH04fxUN3ycUSCZRV76KnPOi90j-I2a8',
+            telegramChatId: '170363358'
+        };
+
+        // === FORMAT TEST DATA ===
+        function formatTestData(data) {
+            let text = '🧪 ТЕСТОВАЯ ОТПРАВКА\n';
+            text += '══════════════════════\n\n';
+            text += `👤 Имя: ${data.name}\n`;
+            text += `📧 Email: ${data.email}\n`;
+            text += `💬 Сообщение: ${data.message}\n`;
+            if (data.testData) {
+                text += `🔧 Доп. данные: ${data.testData}\n`;
+            }
+            text += `\n📅 Время: ${data._timestamp}\n`;
+            text += `\n══════════════════════\n`;
+            text += '✅ Это тестовое сообщение для проверки работоспособности системы тройной отправки\n\n';
+            text += `📍 Form ID: ${CONFIG.formspreeId}\n`;
+            text += `📍 Chat ID: ${CONFIG.telegramChatId}\n`;
+            return text;
+        }
+
+        // === SEND TO FORMSPREE ===
+        async function sendToFormspree(data) {
+            try {
+                document.getElementById('loadingText').textContent = 'Отправка на Email через Formspree...';
+                
+                const response = await fetch(`https://formspree.io/f/${CONFIG.formspreeId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        ...data,
+                        _subject: '🧪 ТЕСТ - Тройная отправка',
+                        _replyto: data.email
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${result.error || 'Unknown error'}`);
+                }
+
+                return { 
+                    success: true, 
+                    message: 'Письмо отправлено на galiamov.al@tricompany.ru',
+                    details: result
+                };
+            } catch (error) {
+                console.error('Formspree error:', error);
+                return { 
+                    success: false, 
+                    error: error.message,
+                    message: 'Ошибка отправки Email'
+                };
+            }
+        }
+
+        // === SEND TO TELEGRAM ===
+        async function sendToTelegram(data) {
+            try {
+                document.getElementById('loadingText').textContent = 'Отправка в Telegram...';
+                
+                const text = formatTestData(data);
+                const telegramUrl = `https://api.telegram.org/bot${CONFIG.telegramBotToken}/sendMessage`;
+                
+                const response = await fetch(telegramUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        chat_id: CONFIG.telegramChatId,
+                        text: text,
+                        parse_mode: 'HTML'
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.ok) {
+                    throw new Error(result.description || 'Telegram API error');
+                }
+
+                return { 
+                    success: true,
+                    message: `Сообщение отправлено в чат ${CONFIG.telegramChatId}`,
+                    details: result
+                };
+            } catch (error) {
+                console.error('Telegram error:', error);
+                return { 
+                    success: false, 
+                    error: error.message,
+                    message: 'Ошибка отправки в Telegram'
+                };
+            }
+        }
+
+        // === DOWNLOAD JSON ===
+        function downloadJSON(data) {
+            try {
+                document.getElementById('loadingText').textContent = 'Сохранение JSON...';
+                
+                const dataStr = JSON.stringify(data, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `test_submission_${Date.now()}.json`;
+                link.click();
+                URL.revokeObjectURL(url);
+                
+                return { 
+                    success: true,
+                    message: 'JSON файл скачан в папку "Загрузки"'
+                };
+            } catch (error) {
+                console.error('JSON download error:', error);
+                return { 
+                    success: false, 
+                    error: error.message,
+                    message: 'Ошибка скачивания JSON'
+                };
+            }
+        }
+
+        // === FORM SUBMISSION ===
+        document.getElementById('testForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Show loading
+            document.getElementById('loadingOverlay').classList.add('visible');
+            document.getElementById('submitBtn').disabled = true;
+            
+            // Collect data
+            const formData = new FormData(this);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                message: formData.get('message'),
+                testData: formData.get('testData'),
+                _timestamp: new Date().toISOString(),
+                _date: new Date().toLocaleString('ru-RU'),
+                _test: true
+            };
+
+            const results = {};
+
+            // 1. Download JSON
+            document.getElementById('loadingText').textContent = 'Сохранение JSON...';
+            const jsonResult = downloadJSON(data);
+            results.json = jsonResult;
+            
+            if (jsonResult.success) {
+                document.getElementById('jsonStatus').className = 'status-indicator status-success';
+                document.getElementById('jsonStatus').textContent = '💾 JSON: Скачан';
+            } else {
+                document.getElementById('jsonStatus').className = 'status-indicator status-error';
+                document.getElementById('jsonStatus').textContent = '💾 JSON: Ошибка';
+            }
+
+            // 2. Send to Formspree
+            const formspreeResult = await sendToFormspree(data);
+            results.formspree = formspreeResult;
+            
+            if (formspreeResult.success) {
+                document.getElementById('emailStatus').className = 'status-indicator status-success';
+                document.getElementById('emailStatus').textContent = '✉️ Email: Отправлено';
+            } else {
+                document.getElementById('emailStatus').className = 'status-indicator status-error';
+                document.getElementById('emailStatus').textContent = '✉️ Email: Ошибка';
+            }
+
+            // 3. Send to Telegram
+            const telegramResult = await sendToTelegram(data);
+            results.telegram = telegramResult;
+            
+            if (telegramResult.success) {
+                document.getElementById('telegramStatus').className = 'status-indicator status-success';
+                document.getElementById('telegramStatus').textContent = '📱 Telegram: Отправлено';
+            } else {
+                document.getElementById('telegramStatus').className = 'status-indicator status-error';
+                document.getElementById('telegramStatus').textContent = '📱 Telegram: Ошибка';
+            }
+
+            // Show results
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.remove('visible');
+                document.getElementById('formContent').style.display = 'none';
+                document.getElementById('successMessage').classList.add('visible');
+
+                // Build results HTML
+                let resultsHTML = '';
+                
+                // JSON result
+                resultsHTML += `<div class="result-item">
+                    <strong>💾 JSON (локальное скачивание):</strong><br>
+                    ${jsonResult.success 
+                        ? `<span style="color: #155724;">✅ ${jsonResult.message}</span>` 
+                        : `<span style="color: #721c24;">❌ ${jsonResult.message}: ${jsonResult.error}</span>`
+                    }
+                </div>`;
+
+                // Email result
+                resultsHTML += `<div class="result-item">
+                    <strong>✉️ Email (Formspree):</strong><br>
+                    ${formspreeResult.success 
+                        ? `<span style="color: #155724;">✅ ${formspreeResult.message}</span>` 
+                        : `<span style="color: #721c24;">❌ ${formspreeResult.message}<br><small>${formspreeResult.error}</small></span>`
+                    }
+                </div>`;
+
+                // Telegram result
+                resultsHTML += `<div class="result-item">
+                    <strong>📱 Telegram:</strong><br>
+                    ${telegramResult.success 
+                        ? `<span style="color: #155724;">✅ ${telegramResult.message}</span>` 
+                        : `<span style="color: #721c24;">❌ ${telegramResult.message}<br><small>${telegramResult.error}</small></span>`
+                    }
+                </div>`;
+
+                // Summary
+                const successCount = [jsonResult.success, formspreeResult.success, telegramResult.success].filter(Boolean).length;
+                resultsHTML += `<div class="result-item" style="border-left-color: ${successCount === 3 ? '#28a745' : successCount > 0 ? '#ffc107' : '#dc3545'}; background: #f8f9fa; margin-top: 15px;">
+                    <strong>📊 Итого:</strong> ${successCount}/3 канала успешно
+                </div>`;
+
+                document.getElementById('resultsBox').innerHTML = resultsHTML;
+
+                // Log full results to console
+                console.log('=== TEST RESULTS ===');
+                console.log('JSON:', jsonResult);
+                console.log('Formspree:', formspreeResult);
+                console.log('Telegram:', telegramResult);
+                console.log('Submitted data:', data);
+
+                window.scrollTo(0, 0);
+            }, 1000);
+        });
+
+        // Pre-fill form with test data
+        window.addEventListener('load', function() {
+            document.getElementById('name').value = 'Алик Галямов (ТЕСТ)';
+            document.getElementById('email').value = 'galiamov.al@gmail.com';
+            document.getElementById('message').value = 'Это тестовое сообщение для проверки работы системы тройной отправки: Email через Formspree, уведомление в Telegram и локальное сохранение JSON.';
+            document.getElementById('testData').value = `Тест от ${new Date().toLocaleString('ru-RU')}`;
+        });
+    </script>
+</body>
+</html>
